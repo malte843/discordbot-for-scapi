@@ -7,6 +7,7 @@ const {
 } = require("discord.js");
 const request = require("request");
 var debugmode = false;
+var firstMsg = true;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -163,10 +164,18 @@ function sendEmbed(json, author, interaction, currentFriend) {
     });
     friendCount = 0;
   } else {
-    interaction.reply({
-      embeds: [embed],
-      components: [btnLoadMore],
-    });
+    if (firstMsg) {
+      interaction.reply({
+        embeds: [embed],
+        components: [btnLoadMore],
+      });
+      firstMsg = false;
+    } else {
+      interaction.reply({
+        embeds: [embed],
+      });
+      friendCount = 0;
+    }
   }
 
   mFriendCount = 0;
