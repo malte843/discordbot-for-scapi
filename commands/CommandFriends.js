@@ -6,7 +6,7 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const request = require("request");
-var debugmode = true;
+var debugmode = false;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,6 +23,8 @@ module.exports = {
     const name = interaction.options.getString("name");
     const apiurl = process.env.API_URL.replace(":name", name);
 
+    var friendCount = 0;
+
     const options = {
       url: apiurl,
     };
@@ -30,7 +32,26 @@ module.exports = {
       if (!error && response.statusCode === 200) {
         const info = JSON.parse(body);
         debugConsole(JSON.stringify(info));
-        sendEmbed(info, author, interaction, 0);
+        friendCount = sendEmbed(info, author, interaction, 0);
+
+        if (friendCount != 0) {
+          const filter = (click) => click.user.id === interaction.user.id;
+          const collector = interaction.channel.createMessageComponentCollector(
+            {
+              max: "1", // The number of times a user can click on the button
+              time: "60000", // The amount of time the collector is valid for in milliseconds,
+              filter, // Add the filter
+            }
+          );
+
+          collector.on("collect", (interaction) => {
+            friendCount = sendEmbed(info, author, interaction, friendCount);
+          });
+
+          collector.on("end", (collected) => {
+            console.log(`Collected ${collected.size} clicks`); // Run a piece of code when the collector ends
+          });
+        }
       } else if (response.statusCode === 500) {
         interaction.reply("The player does not exist.");
         debugConsole("Command failed");
@@ -68,23 +89,29 @@ function sendEmbed(json, author, interaction, currentFriend) {
   const thumbnailUrl = json.rockstarAccount.avatarUrl;
   var len = Object.keys(json.friends).length;
 
-  var embedFields = [{ name: "Friends for Profile:", value: name + ` (${len} friends)` }];
+  var embedFields = [
+    { name: "Friends for Profile:", value: name + ` (${len} friends)` },
+  ];
 
   var friendCount = 0;
+  var mFriendCount = 0;
   var lastFriend = false;
 
   try {
-    friendsArray.forEach((obj) => {
-      if (friendCount < 5) {
-        var fName = obj.name;
-        var fRid = obj.rockstarId;
-        const fProfileLink =
-          "https://socialclub.rockstargames.com/member/" + fName;
-        var field = { name: fName + ` (${fRid})`, value: fProfileLink };
-        embedFields.push(field);
-        friendCount++;
-        if(friendCount === len) {
-            lastFriend = true;
+    friendsArray.forEach((obj, index) => {
+      if (mFriendCount < 15) {
+        if (index >= currentFriend) {
+          var fName = obj.name;
+          var fRid = obj.rockstarId;
+          const fProfileLink =
+            "https://socialclub.rockstargames.com/member/" + fName;
+          var field = { name: fName + ` (${fRid})`, value: fProfileLink };
+          embedFields.push(field);
+          friendCount++;
+          mFriendCount++;
+        }
+        if (friendCount === len) {
+          lastFriend = true;
         }
       } else {
         return;
@@ -119,16 +146,20 @@ function sendEmbed(json, author, interaction, currentFriend) {
       .setStyle(ButtonStyle.Success)
   );
 
-  if(lastFriend) {
+  if (lastFriend) {
     interaction.reply({
-        embeds: [embed],
-      });
+      embeds: [embed],
+    });
+    friendCount = 0;
   } else {
     interaction.reply({
-        embeds: [embed],
-        //components: [btnLoadMore],
-      });
+      embeds: [embed],
+      components: [btnLoadMore],
+    });
   }
+
+  mFriendCount = 0;
+  return friendCount;
 }
 
 process.on("uncaughtException", function (err) {
