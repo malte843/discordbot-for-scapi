@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const request = require("request");
-var debugmode = false;
+var debugmode = true;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -54,6 +54,7 @@ function sendEmbed(json, author, interaction) {
   const name = json.rockstarAccount.name;
   const profileLink = "https://socialclub.rockstargames.com/member/" + name;
 
+  const thumbnailUrl = nullify(json.rockstarAccount.avatarUrl);
   const rid = nullify(json.rockstarAccount.rockstarId);
   const crewName = nullify(json.rockstarAccount.primaryClanName);
   const crewId = nullify(json.rockstarAccount.primaryClanId);
@@ -65,6 +66,9 @@ function sendEmbed(json, author, interaction) {
   const friendsCount = nullify(json.rockstarAccount.friendCount);
   const lastPlayedOn = nullify(json.rockstarAccount.lastUgcPlatform);
   const lastPlayedGame = nullify(json.rockstarAccount.lastUgcTitle);
+  if (!lastPlayedGame === "Hidden") {
+    lastPlayedGame = lastPlayedGame.toUpperCase();
+  }
   const wallPosts = json.rockstarAccount.allowWallPost;
   const wallHidden = json.rockstarAccount.wallHidden;
   const allowStatCompare = json.rockstarAccount.allowStatCompare;
@@ -85,28 +89,29 @@ function sendEmbed(json, author, interaction) {
   */
 
   try {
-    gamesOwnedArray.forEach(obj => {
+    gamesOwnedArray.forEach((obj) => {
       gamesOwned += "\n" + obj.name;
-    })
-  
-    linkedAccountsArray.forEach(obj => {
-      linkedAccounts += "\n" + obj.onlineServiceDisplayName;
-    })
+    });
   } catch {
-    interaction.reply("The player does not exist.");
+    gamesOwned = "Hidden";
+  }
+
+  try {
+    linkedAccountsArray.forEach((obj) => {
+      linkedAccounts += "\n" + obj.onlineServiceDisplayName;
+    });
+  } catch {
+    linkedAccounts = "Hidden";
   }
 
   gamesOwned = nullify(gamesOwned);
   linkedAccounts = nullify(linkedAccounts);
 
-  //gamesOwned = gamesOwned.substring(0, 2);
-  //linkedAccounts = linkedAccounts.substring(0, 2);
-
   const embed = {
     color: 0xff8800,
     title: "Socialclub RID Lookup",
     thumbnail: {
-      url: "https://a.rsg.sc/n/turonmcs/n",
+      url: thumbnailUrl,
     },
     fields: [
       {
@@ -171,7 +176,7 @@ function sendEmbed(json, author, interaction) {
       },
       {
         name: "Last played game",
-        value: lastPlayedGame.toUpperCase(),
+        value: lastPlayedGame,
         inline: true,
       },
       {
