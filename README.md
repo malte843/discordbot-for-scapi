@@ -2,7 +2,7 @@
 
 ### This was build using nodejs v16.17.1
 
-To use this you need https://github.com/jdjdpsjsjdlsk/rsg-socialclub-api this setup.
+To use this you need https://github.com/jdjdpsjsjdlsk/rsg-socialclub-api setup.
 
 Setup:
 ```
