@@ -87,17 +87,24 @@ function sendEmbed(json, author, interaction, currentFriend) {
   const name = json.rockstarAccount.name;
   const friendsArray = json.friends;
   const thumbnailUrl = json.rockstarAccount.avatarUrl;
-  var len = Object.keys(json.friends).length;
-
-  var embedFields = [
-    { name: "Friends for Profile:", value: name + ` (${len} friends)` },
-  ];
+  var len = 0;
+  var len1 = 0;
+  try {
+    len1 = Object.keys(json.friends).length;
+  } catch {
+    len1 = 0;
+  }
 
   var friendCount = 0;
   var mFriendCount = 0;
   var lastFriend = false;
 
+  var embedFields = [
+    { name: "Friends for Profile:", value: name + ` (${len1} friends)` },
+  ];
+
   try {
+    len = Object.keys(json.friends).length;
     friendsArray.forEach((obj, index) => {
       if (mFriendCount < 15) {
         if (index >= currentFriend) {
@@ -146,6 +153,10 @@ function sendEmbed(json, author, interaction, currentFriend) {
       .setStyle(ButtonStyle.Success)
   );
 
+  if (len === 0) {
+    interaction.reply("The player has its friends hidden.");
+    return 0;
+  }
   if (lastFriend) {
     interaction.reply({
       embeds: [embed],
