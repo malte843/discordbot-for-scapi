@@ -4,7 +4,7 @@
 
 To use this you need https://github.com/jdjdpsjsjdlsk/rsg-socialclub-api setup.
 
-Setup:
+### Setup:
 ```
 git clone https://github.com/jdjdpsjsjdlsk/discordbot-for-scapi.git
 cd discordbot-for-scapi
@@ -21,6 +21,6 @@ To test the bot run `/rid [player]` on discord server where your bot is in.
 
 Commands also work in dm with bot
 
-Preview of `/rid` command:
+### Preview of `/rid` command:
 
 ![RID Bot](https://user-images.githubusercontent.com/41925758/207939713-ec1acebd-5905-49ed-ab8b-4b90a7361adf.PNG)
