@@ -8,7 +8,7 @@ To use this you need https://github.com/jdjdpsjsjdlsk/rsg-socialclub-api setup.
 ```
 git clone https://github.com/jdjdpsjsjdlsk/discordbot-for-scapi.git
 cd discordbot-for-scapi
-npm install discord.js dotenv request
+npm install
 ```
 
 Open .env file and fill your Bottoken TOKEN, CLIENTID and the url+port from your api if you changed it.
