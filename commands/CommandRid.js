@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const request = require("request");
-var debugmode = true;
+var debugmode = false;
 
 module.exports = {
   data: new SlashCommandBuilder()

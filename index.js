@@ -44,8 +44,6 @@ for (const file of commandFiles) {
 
 client.on("ready", () => {
   console.log("Bot is online!");
-
-  client.user.setActivity("Minecraft Server", { type: "WATCHING" });
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -67,8 +65,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
       ephemeral: true,
     });
   }
-
-  console.log(interaction);
+  let gId = interaction.guildId;
+  if(gId === null) {
+    console.log("Command /" + interaction.commandName + " from " + interaction.user.tag + " in dm");
+  } else {
+    console.log("Command /" + interaction.commandName + " from " + interaction.user.tag + " in guild id " + gId);
+  }  
 });
 
 client.login(token);
