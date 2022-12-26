@@ -11,7 +11,7 @@ cd discordbot-for-scapi
 npm install
 ```
 
-Open .env file and fill your Bottoken TOKEN, CLIENTID and the url+port from your api if you changed it.
+Rename .env.example to .env and fill your Bottoken TOKEN, CLIENTID and the url+port from your api if you changed it.
 
 For first start run `node deploy-commands.js` or `npm run updateCommands` to register commands to discord. You only need to do this once or if you happen to add commands or change description or something.
 
